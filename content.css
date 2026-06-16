@@ -26,9 +26,9 @@
   display: none; /* Shown dynamically on mouse move */
 }
 
-/* Cloned Pokemon Text Overlay and Descendants */
-.pokefont-clone-overlay,
-.pokefont-clone-overlay * {
+/* Cloned Pokemon Text Overlay Wrapper and Descendants */
+.pokefont-clone-wrapper,
+.pokefont-clone-wrapper * {
   font-family: 'Pokemon Solid', 'Impact', 'Arial Black', sans-serif !important;
   color: #ffcb05 !important;
   -webkit-text-stroke: 1.2px #111111 !important; /* Sharp black stroke */
@@ -54,15 +54,26 @@
   outline: none !important;
   box-shadow: none !important;
   box-sizing: border-box !important;
-  transform-origin: left top !important;
   display: block !important;
-  /* Slanted Pokémon look - scaled down to bypass minimum font-size clamp */
-  transform: scale(var(--pokefont-scale, 0.48)) skewX(-10deg) !important;
   opacity: 0;
   transition: opacity 0.12s ease;
+  overflow: hidden !important; /* Important: clip wrapper elements */
 }
 
-.pokefont-clone-overlay * {
+.pokefont-clone-wrapper {
+  transform-origin: left top !important;
+  /* Slanted Pokémon look - scaled down to bypass minimum font-size clamp */
+  transform: scale(var(--pokefont-scale, 0.68)) skewX(-10deg) !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.pokefont-clone-overlay *,
+.pokefont-clone-wrapper * {
   background: transparent !important;
   border: none !important;
   outline: none !important;
@@ -75,5 +86,6 @@
 
 /* CSS variables dynamically updated by content.js */
 .pokefont-clipped {
-  clip-path: circle(calc(70px / var(--pokefont-scale, 0.48)) at var(--lens-x) var(--lens-y)) !important;
+  /* No scale division needed here because the outer overlay container is at scale 1.0 */
+  clip-path: circle(70px at var(--lens-x) var(--lens-y)) !important;
 }

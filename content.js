@@ -159,52 +159,66 @@
         // If not cloned yet, build the overlay clone
         if (!activeOverlays.has(item.element)) {
           const original = item.element;
-          // Clone the node itself to preserve original HTML structures, classes, and formatting tags
-          const clone = original.cloneNode(true);
+          
+          // 1. Create the outer container (no scale/skew transforms, so clip-path remains a perfect circle)
+          const clone = document.createElement('div');
+          clone.classList.add('pokefont-clone-overlay', 'pokefont-clipped');
+          
+          // 2. Clone the original node as the inner wrapper (will carry scale/skew transforms)
+          const wrapper = original.cloneNode(true);
           
           // Remove ID attributes in the cloned subtree to avoid DOM duplication conflicts
-          clone.removeAttribute('id');
-          clone.querySelectorAll('[id]').forEach((child) => child.removeAttribute('id'));
+          wrapper.removeAttribute('id');
+          wrapper.querySelectorAll('[id]').forEach((child) => child.removeAttribute('id'));
 
-          clone.classList.add('pokefont-clone-overlay', 'pokefont-clipped');
+          wrapper.className = 'pokefont-clone-wrapper';
+          clone.appendChild(wrapper);
 
-          // Align clone coordinates exactly on top of the original element
+          // Align outer clone coordinates exactly on top of the original element
           const styles = window.getComputedStyle(original);
-          const scale = 0.48; // Bypass Chrome's min font size clamping using visual scaling
+          const scale = 0.68; // Medium visual scale for Pokémon Solid text characters
 
-          clone.style.setProperty('--pokefont-scale', scale);
+          wrapper.style.setProperty('--pokefont-scale', scale);
+          
+          // Position the outer container exactly matches the original text element
           clone.style.position = 'fixed';
           clone.style.left = item.left + 'px';
           clone.style.top = item.top + 'px';
-          clone.style.width = (item.width / scale) + 'px';
-          clone.style.height = (item.height / scale) + 'px';
+          clone.style.width = item.width + 'px';
+          clone.style.height = item.height + 'px';
+          clone.style.backgroundColor = getElementBackgroundColor(original);
+          clone.style.overflow = 'hidden';
+
+          // Configure layout properties on the inner wrapper scaled by 1 / scale
+          wrapper.style.position = 'absolute';
+          wrapper.style.left = '0px';
+          wrapper.style.top = '0px';
+          wrapper.style.width = (item.width / scale) + 'px';
+          wrapper.style.height = (item.height / scale) + 'px';
           
-          clone.style.fontSize = styles.fontSize;
-          clone.style.fontWeight = styles.fontWeight;
+          wrapper.style.fontSize = styles.fontSize;
+          wrapper.style.fontWeight = styles.fontWeight;
           
           const parsedLineHeight = parseFloat(styles.lineHeight);
           if (!isNaN(parsedLineHeight)) {
-            clone.style.lineHeight = (parsedLineHeight / scale) + 'px';
+            wrapper.style.lineHeight = (parsedLineHeight / scale) + 'px';
           } else {
-            clone.style.lineHeight = styles.lineHeight;
+            wrapper.style.lineHeight = styles.lineHeight;
           }
           
-          clone.style.textAlign = styles.textAlign;
-          clone.style.fontStyle = styles.fontStyle;
-          clone.style.display = styles.display === 'inline' ? 'inline-block' : styles.display;
+          wrapper.style.textAlign = styles.textAlign;
+          wrapper.style.fontStyle = styles.fontStyle;
+          wrapper.style.display = styles.display === 'inline' ? 'inline-block' : styles.display;
           
           // Scale paddings to keep layout spacing proportions identical
           const padL = parseFloat(styles.paddingLeft);
           const padR = parseFloat(styles.paddingRight);
           const padT = parseFloat(styles.paddingTop);
           const padB = parseFloat(styles.paddingBottom);
-          clone.style.paddingLeft = (isNaN(padL) ? 0 : padL / scale) + 'px';
-          clone.style.paddingRight = (isNaN(padR) ? 0 : padR / scale) + 'px';
-          clone.style.paddingTop = (isNaN(padT) ? 0 : padT / scale) + 'px';
-          clone.style.paddingBottom = (isNaN(padB) ? 0 : padB / scale) + 'px';
-
-          // Set clone solid background to block/hide original black text underneath
-          clone.style.backgroundColor = getElementBackgroundColor(original);
+          wrapper.style.paddingLeft = (isNaN(padL) ? 0 : padL / scale) + 'px';
+          wrapper.style.paddingRight = (isNaN(padR) ? 0 : padR / scale) + 'px';
+          wrapper.style.paddingTop = (isNaN(padT) ? 0 : padT / scale) + 'px';
+          wrapper.style.paddingBottom = (isNaN(padB) ? 0 : padB / scale) + 'px';
 
           document.documentElement.appendChild(clone);
           
@@ -219,12 +233,11 @@
           clone.classList.add('visible');
         }
 
-        // Update clip-path positions relative to the clone overlay box, adjusting for scale
+        // Update clip-path positions relative to the clone overlay box (unscaled coordinate system)
         const info = activeOverlays.get(item.element);
         if (info && info.clone) {
-          const scale = 0.48;
-          const localX = (e.clientX - info.rect.left) / scale;
-          const localY = (e.clientY - info.rect.top) / scale;
+          const localX = e.clientX - info.rect.left;
+          const localY = e.clientY - info.rect.top;
           info.clone.style.setProperty('--lens-x', localX + 'px');
           info.clone.style.setProperty('--lens-y', localY + 'px');
         }
