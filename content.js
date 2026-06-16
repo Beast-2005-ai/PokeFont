@@ -167,9 +167,17 @@
           clone.style.width = item.width + 'px';
           clone.style.height = item.height + 'px';
           
-          clone.style.fontSize = styles.fontSize;
+          const originalFontSize = parseFloat(styles.fontSize);
+          clone.style.fontSize = (originalFontSize * 0.76) + 'px';
           clone.style.fontWeight = styles.fontWeight;
-          clone.style.lineHeight = styles.lineHeight;
+          
+          const parsedLineHeight = parseFloat(styles.lineHeight);
+          if (!isNaN(parsedLineHeight)) {
+            clone.style.lineHeight = (parsedLineHeight * 0.9) + 'px';
+          } else {
+            clone.style.lineHeight = styles.lineHeight;
+          }
+          clone.style.letterSpacing = '-0.3px';
           clone.style.textAlign = styles.textAlign;
           clone.style.fontStyle = styles.fontStyle;
           clone.style.display = styles.display === 'inline' ? 'inline-block' : styles.display;
