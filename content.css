@@ -73,20 +73,18 @@
     2px 0px 0 #3b4cca,
     -2px 0px 0 #3b4cca !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.8px !important;
-  /* Slanted Pokémon look + slight zoom magnification */
-  transform: skewX(-12deg) scale(1.03) !important;
+  letter-spacing: 0.4px !important;
+  /* Slanted Pokémon look - no magnification scale to match original text size precisely */
+  transform: skewX(-10deg) !important;
   position: fixed !important;
   pointer-events: none !important;
   z-index: 99999999 !important;
   margin: 0 !important;
   box-sizing: border-box !important;
   transform-origin: left top !important;
-  white-space: pre-wrap !important;
-  word-break: break-word !important;
   display: block !important;
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.12s ease;
 }
 
 .pokefont-clone-overlay.visible {
