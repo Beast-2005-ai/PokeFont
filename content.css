@@ -43,6 +43,7 @@
     1.5px 0px 0 #111111,
     -1.5px 0px 0 #111111 !important;
   text-transform: uppercase !important;
+  letter-spacing: 2.5px !important; /* Spreads out the letters to prevent horizontal overlapping */
 }
 
 .pokefont-clone-overlay {
