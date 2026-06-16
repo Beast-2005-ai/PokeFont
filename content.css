@@ -5,7 +5,7 @@
   font-style: normal;
 }
 
-/* Custom Pokéball Lens Cursor */
+/* Custom Plain Transparent Lens Cursor */
 .pokefont-lens-container {
   position: fixed;
   top: 0;
@@ -18,43 +18,12 @@
   pointer-events: none;
   z-index: 100000000;
   box-sizing: border-box;
-  border: 2px solid #222222; /* Sleek black border */
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    inset 0 0 10px rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05); /* very translucent white */
-  backdrop-filter: blur(0.5px);
+  border: 2px solid #222222; /* Thin sharp dark border */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); /* Soft shadow around the border ring */
+  background: transparent !important; /* 100% transparent inside */
+  backdrop-filter: none !important; /* Removed blur to prevent any text fuzziness */
   overflow: hidden;
   display: none; /* Shown dynamically on mouse move */
-}
-
-/* Pokéball Top Red Half */
-.pokefont-lens-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: rgba(239, 68, 68, 0.08); /* Very translucent red */
-  border-bottom: 2px solid #222222; /* Separating black line */
-  box-sizing: border-box;
-}
-
-/* Pokéball Center Button */
-.pokefont-lens-container::after {
-  content: '';
-  position: absolute;
-  top: calc(50% - 7px);
-  left: calc(50% - 7px);
-  width: 14px;
-  height: 14px;
-  background: #fff;
-  border: 2px solid #222222; /* Black border around center button */
-  border-radius: 50%;
-  z-index: 2;
-  box-sizing: border-box;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Cloned Pokemon Text Overlay */

@@ -168,16 +168,16 @@
           clone.style.height = item.height + 'px';
           
           const originalFontSize = parseFloat(styles.fontSize);
-          clone.style.fontSize = (originalFontSize * 0.76) + 'px';
+          clone.style.fontSize = (originalFontSize * 0.63) + 'px';
           clone.style.fontWeight = styles.fontWeight;
           
           const parsedLineHeight = parseFloat(styles.lineHeight);
           if (!isNaN(parsedLineHeight)) {
-            clone.style.lineHeight = (parsedLineHeight * 0.9) + 'px';
+            clone.style.lineHeight = (parsedLineHeight * 0.78) + 'px';
           } else {
             clone.style.lineHeight = styles.lineHeight;
           }
-          clone.style.letterSpacing = '-0.3px';
+          clone.style.letterSpacing = '-0.4px';
           clone.style.textAlign = styles.textAlign;
           clone.style.fontStyle = styles.fontStyle;
           clone.style.display = styles.display === 'inline' ? 'inline-block' : styles.display;
