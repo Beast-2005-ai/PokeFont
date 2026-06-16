@@ -41,13 +41,26 @@
   function rebuildTextCache() {
     // Select all potential text container tags
     const textSelectors = 'p, span, h1, h2, h3, h4, h5, h6, a, li, b, strong, i, em, button, label, td, th';
-    const rawElements = document.querySelectorAll(textSelectors);
-    const list = [];
+    const rawElements = Array.from(document.querySelectorAll(textSelectors));
+    
+    // Filter out elements that have an ancestor in the selected set of elements
+    // to prevent duplicate overlays for nested elements (like span or a inside p)
+    const elementsToCache = rawElements.filter((el) => {
+      let parent = el.parentElement;
+      while (parent) {
+        if (rawElements.includes(parent)) {
+          return false; // Skip this element as its ancestor will be cloned
+        }
+        parent = parent.parentElement;
+      }
+      return true;
+    });
 
+    const list = [];
     const viewportW = window.innerWidth;
     const viewportH = window.innerHeight;
 
-    rawElements.forEach((el) => {
+    elementsToCache.forEach((el) => {
       // Skip overlay clones or visual helper elements
       if (
         el.classList.contains('pokefont-lens-container') ||
@@ -56,17 +69,8 @@
         return;
       }
 
-      // Check if it has readable text nodes directly inside it (ignoring children tags to prevent duplicate overlaying)
-      let hasDirectText = false;
-      for (let i = 0; i < el.childNodes.length; i++) {
-        const node = el.childNodes[i];
-        if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
-          hasDirectText = true;
-          break;
-        }
-      }
-
-      if (hasDirectText) {
+      // Check if it has text content (direct or indirect)
+      if (el.textContent.trim().length > 0) {
         const rect = el.getBoundingClientRect();
         
         // Skip hidden or collapsed elements
@@ -155,41 +159,49 @@
         // If not cloned yet, build the overlay clone
         if (!activeOverlays.has(item.element)) {
           const original = item.element;
-          const clone = document.createElement('div');
-          clone.className = 'pokefont-clone-overlay pokefont-clipped';
-          clone.textContent = original.textContent;
+          // Clone the node itself to preserve original HTML structures, classes, and formatting tags
+          const clone = original.cloneNode(true);
+          
+          // Remove ID attributes in the cloned subtree to avoid DOM duplication conflicts
+          clone.removeAttribute('id');
+          clone.querySelectorAll('[id]').forEach((child) => child.removeAttribute('id'));
+
+          clone.classList.add('pokefont-clone-overlay', 'pokefont-clipped');
 
           // Align clone coordinates exactly on top of the original element
           const styles = window.getComputedStyle(original);
-          
+          const scale = 0.48; // Bypass Chrome's min font size clamping using visual scaling
+
+          clone.style.setProperty('--pokefont-scale', scale);
+          clone.style.position = 'fixed';
           clone.style.left = item.left + 'px';
           clone.style.top = item.top + 'px';
-          clone.style.width = item.width + 'px';
-          clone.style.height = item.height + 'px';
+          clone.style.width = (item.width / scale) + 'px';
+          clone.style.height = (item.height / scale) + 'px';
           
-          const originalFontSize = parseFloat(styles.fontSize);
-          clone.style.fontSize = (originalFontSize * 0.63) + 'px';
+          clone.style.fontSize = styles.fontSize;
           clone.style.fontWeight = styles.fontWeight;
           
           const parsedLineHeight = parseFloat(styles.lineHeight);
           if (!isNaN(parsedLineHeight)) {
-            clone.style.lineHeight = (parsedLineHeight * 0.78) + 'px';
+            clone.style.lineHeight = (parsedLineHeight / scale) + 'px';
           } else {
             clone.style.lineHeight = styles.lineHeight;
           }
-          clone.style.letterSpacing = '-0.4px';
+          
           clone.style.textAlign = styles.textAlign;
           clone.style.fontStyle = styles.fontStyle;
           clone.style.display = styles.display === 'inline' ? 'inline-block' : styles.display;
           
-          // Copy original text-wrapping configurations to avoid text breaking incorrectly
-          clone.style.whiteSpace = styles.whiteSpace;
-          clone.style.wordBreak = styles.wordBreak;
-
-          clone.style.paddingLeft = styles.paddingLeft;
-          clone.style.paddingRight = styles.paddingRight;
-          clone.style.paddingTop = styles.paddingTop;
-          clone.style.paddingBottom = styles.paddingBottom;
+          // Scale paddings to keep layout spacing proportions identical
+          const padL = parseFloat(styles.paddingLeft);
+          const padR = parseFloat(styles.paddingRight);
+          const padT = parseFloat(styles.paddingTop);
+          const padB = parseFloat(styles.paddingBottom);
+          clone.style.paddingLeft = (isNaN(padL) ? 0 : padL / scale) + 'px';
+          clone.style.paddingRight = (isNaN(padR) ? 0 : padR / scale) + 'px';
+          clone.style.paddingTop = (isNaN(padT) ? 0 : padT / scale) + 'px';
+          clone.style.paddingBottom = (isNaN(padB) ? 0 : padB / scale) + 'px';
 
           // Set clone solid background to block/hide original black text underneath
           clone.style.backgroundColor = getElementBackgroundColor(original);
@@ -207,11 +219,12 @@
           clone.classList.add('visible');
         }
 
-        // Update clip-path positions relative to the clone overlay box
+        // Update clip-path positions relative to the clone overlay box, adjusting for scale
         const info = activeOverlays.get(item.element);
         if (info && info.clone) {
-          const localX = e.clientX - info.rect.left;
-          const localY = e.clientY - info.rect.top;
+          const scale = 0.48;
+          const localX = (e.clientX - info.rect.left) / scale;
+          const localY = (e.clientY - info.rect.top) / scale;
           info.clone.style.setProperty('--lens-x', localX + 'px');
           info.clone.style.setProperty('--lens-y', localY + 'px');
         }
