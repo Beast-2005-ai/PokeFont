@@ -1,16 +1,26 @@
 {
   "manifest_version": 3,
   "name": "PokeFont",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Dynamic Pokémon lens cursor that transforms text shapes and outlines on hover.",
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["http://*/*", "https://*/*"],
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_end"
     }
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "web_accessible_resources": [
     {
       "resources": ["assets/pokemon-solid.ttf"],

@@ -1,4 +1,8 @@
 (function () {
+  // Prevent duplicate injections
+  if (window.pokefontLoaded) return;
+  window.pokefontLoaded = true;
+
   // Create and inject the Pokéball magnifying lens element
   const lens = document.createElement('div');
   lens.className = 'pokefont-lens-container';
