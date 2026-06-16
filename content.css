@@ -18,12 +18,17 @@
   pointer-events: none;
   z-index: 100000000;
   box-sizing: border-box;
-  border: 2px solid #222222; /* Thin sharp dark border */
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); /* Soft shadow around the border ring */
-  background: transparent !important; /* 100% transparent inside */
-  backdrop-filter: none !important; /* Removed blur to prevent any text fuzziness */
+  border: 2px solid #222222;
+  /* Thin sharp dark border */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  /* Soft shadow around the border ring */
+  background: transparent !important;
+  /* 100% transparent inside */
+  backdrop-filter: none !important;
+  /* Removed blur to prevent any text fuzziness */
   overflow: hidden;
-  display: none; /* Shown dynamically on mouse move */
+  display: none;
+  /* Shown dynamically on mouse move */
 }
 
 /* Cloned Pokemon Text Overlay Wrapper and Descendants */
@@ -31,19 +36,20 @@
 .pokefont-clone-wrapper * {
   font-family: 'Pokemon Solid', 'Impact', 'Arial Black', sans-serif !important;
   color: #ffcb05 !important;
-  -webkit-text-stroke: 1.2px #111111 !important; /* Sharp black stroke */
-  /* Thick solid black outline shadow */
-  text-shadow: 
-    1.5px 1.5px 0 #111111,
-    -1.5px -1.5px 0 #111111,
-    1.5px -1.5px 0 #111111,
-    -1.5px 1.5px 0 #111111,
-    0px 1.5px 0 #111111,
-    0px -1.5px 0 #111111,
-    1.5px 0px 0 #111111,
-    -1.5px 0px 0 #111111 !important;
+  -webkit-text-stroke: 1.5px #2a75bb !important; /* Classic Pokémon Blue outline */
+  /* Thick Pokémon Blue shadow for solid border look */
+  text-shadow:
+    1.5px 1.5px 0 #3b4cca,
+    -1.5px -1.5px 0 #3b4cca,
+    1.5px -1.5px 0 #3b4cca,
+    -1.5px 1.5px 0 #3b4cca,
+    0px 1.5px 0 #3b4cca,
+    0px -1.5px 0 #3b4cca,
+    1.5px 0px 0 #3b4cca,
+    -1.5px 0px 0 #3b4cca !important;
   text-transform: uppercase !important;
-  letter-spacing: 2.5px !important; /* Spreads out the letters to prevent horizontal overlapping */
+  letter-spacing: 2.5px !important;
+  /* Spreads out the letters to prevent horizontal overlapping */
 }
 
 .pokefont-clone-overlay {
@@ -58,7 +64,8 @@
   display: block !important;
   opacity: 0;
   transition: opacity 0.12s ease;
-  overflow: hidden !important; /* Important: clip wrapper elements */
+  overflow: hidden !important;
+  /* Important: clip wrapper elements */
 }
 
 .pokefont-clone-wrapper {
